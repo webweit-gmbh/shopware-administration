@@ -50,6 +50,7 @@ Component.register('sw-users-permissions-user-detail', {
             showDeleteModal: null,
             skeletonItemAmount: 3,
             confirmPasswordModal: false,
+            userCustomFields: null,
             timezoneOptions: [],
         };
     },
@@ -177,6 +178,26 @@ Component.register('sw-users-permissions-user-detail', {
                 appearance: 'light',
             };
         },
+
+        // Using the repository to work with customFields
+        customFieldSetRepository() {
+            return this.repositoryFactory.create('custom_field_set');
+        },
+
+        // sets the criteria used for your custom field set
+        customFieldSetCriteria() {
+            const criteria = new Criteria();
+
+            // restrict the customFieldSets to be associated with products
+            criteria.addFilter(Criteria.equals('relations.entityName', 'user'));
+
+            // sort the customFields based on customFieldPosition
+            criteria
+                .getAssociation('customFields')
+                .addSorting(Criteria.sort('config.customFieldPosition', 'ASC', true));
+
+            return criteria;
+        },
     },
 
     watch: {
@@ -208,6 +229,7 @@ Component.register('sw-users-permissions-user-detail', {
                 this.loadLanguages(),
                 this.loadUser(),
                 this.loadCurrentUser(),
+                this.loadCustomFields(),
                 this.loadTimezones(),
             ];
 
@@ -264,6 +286,13 @@ Component.register('sw-users-permissions-user-detail', {
             return this.userService.getUser().then((response) => {
                 this.currentUser = response.data;
             });
+        },
+
+        loadCustomFields() {
+            return this.customFieldSetRepository.search(this.customFieldSetCriteria, Shopware.Context.api)
+                .then((customFieldSets) => {
+                    this.userCustomFields = customFieldSets;
+                });
         },
 
         loadKeys() {
