@@ -122,6 +122,7 @@ export default function createCustomFieldService() {
         'salutation',
         'shipping_method',
         'tax',
+        'user',
     ];
 
     return {

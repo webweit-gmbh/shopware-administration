@@ -210,6 +210,19 @@
             </sw-card>
             {% endblock %}
 
+            {% block sw_setting_user_detail_card_custom_fields %}
+            <sw-card
+                v-if="userCustomFields && user"
+                :title="$tc('sw-settings-custom-field.general.mainMenuItemGeneral')"
+                :isLoading="isLoading"
+            >
+                <sw-custom-field-set-renderer
+                    :entity="user"
+                    :sets="userCustomFields"
+                />
+            </sw-card>
+            {% endblock %}
+
             {%  block sw_setting_user_detail_card_integrations %}
             <sw-card
                 :title="$tc('sw-users-permissions.users.user-detail.labelIntegrationsCard')"
